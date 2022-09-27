@@ -18,12 +18,12 @@ let tableCount = 1;
 class snmpServer {
 
     constructor(conf) {
-        this.snmpAgent(conf.snmpComunity);
+        this.snmpAgent(conf);
     }
 
-    snmpAgent(community) {
+    snmpAgent(conf) {
         const options = {
-            port: 161,
+            port: conf.snmpPort,
             disableAuthorization: false,
             accessControlModelType: snmp.AccessControlModelType.None,
             //engineID: "8000B98380", // where the X's are random hex digits
@@ -43,7 +43,7 @@ class snmpServer {
         this.agent = snmp.createAgent (options, callback);
         this.mib = this.agent.getMib();
         this.authorizer = this.agent.getAuthorizer();
-        this.authorizer.addCommunity(community);
+        this.authorizer.addCommunity(conf.snmpComunity);
     }
 
     setData(data) {
