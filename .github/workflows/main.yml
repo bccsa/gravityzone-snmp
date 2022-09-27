@@ -6,8 +6,6 @@ name: Gravityzone monitoring
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
 jobs:
   build:
@@ -35,4 +33,4 @@ jobs:
     - run: npm --prefix /var/www/gravityzone-snmp/prod i
     - run: npm --prefix /var/www/gravityzone-snmp/prod run build --if-present
     # Restart service
-    - run: sudo systemctl restart gravityzone-snmp
+    - run: sudo service gravityzone-snmp restart
