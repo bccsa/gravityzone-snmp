@@ -2,5 +2,23 @@
   "dependencies": {
     "net-snmp": "^3.8.3",
     "request": "^2.88.2"
-  }
+  },
+  "name": "gravityzone-snmp",
+  "version": "1.0.0",
+  "main": "gravityzone.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bccsa/gravityzone-snmp.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bccsa/gravityzone-snmp/issues"
+  },
+  "homepage": "https://github.com/bccsa/gravityzone-snmp#readme",
+  "description": ""
 }
