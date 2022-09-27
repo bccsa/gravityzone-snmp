@@ -27,8 +27,8 @@ class gravityzone extends EventEmitter {
         // --------------------
         // Endpoint details 
         // --------------------
-        // get endpoint details 
-        this.getEndpoint();
+        // get endpoint details (delay with one min to allow enpoin list to be generated)
+        setTimeout(this.getEndpoint.bind(this), 60000);
         // set interval to get endpoint details 
         setInterval(this.getEndpoint.bind(this), conf.getEndpoint);
     }

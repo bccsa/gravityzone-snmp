@@ -21,6 +21,8 @@ const gz = new gravityzone(conf);
 const snmp = new snmpServer(conf);
 
 setInterval(createMib, conf.snmpUpdate);
+// call create mib for first time (delay with one min to allow enpoin list to be generated)
+setTimeout(createMib, 120000);
 
 // ===================================
 // Function 
