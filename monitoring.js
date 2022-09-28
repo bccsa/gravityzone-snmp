@@ -39,6 +39,7 @@ function createMib() {
                 { type: "Integer", name: "ifMalwareInfection", value: data.malwareStatus.infected ? 1:0, maxAccess: "read-only" },
                 { type: "OctetString", name: "ifLastSeen", value: `${Date.parse(data.lastSeen)/1000}`, maxAccess: "read-only" },
                 { type: "OctetString", name: "ifAgentLastUpdate", value: `${Date.parse(data.agent.lastUpdate)/1000}`, maxAccess: "read-only" },
+                { type: "Integer", name: "ifSignatureOutdated", value: data.agent.signatureOutdated ? 1:0, maxAccess: "read-only" },
             ];
             snmp.setData({ entryID: data.id, name: "ifGravityzone", columns: snmpData, maxAccess: "read-only" });
         }
