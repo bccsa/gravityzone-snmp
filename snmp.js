@@ -19,8 +19,14 @@ class snmpServer {
 
     constructor(conf) {
         this.snmpAgent(conf);
+        this.ttl = conf.snmpTTL;
+        setInterval(this.housekeeper.bind(this), conf.snmpHousekeeper)
     }
 
+    /**
+     * Create a new SNMP Agent when the function is constructed 
+     * @param {Object} conf 
+     */
     snmpAgent(conf) {
         const options = {
             port: conf.snmpPort,
@@ -46,13 +52,19 @@ class snmpServer {
         this.authorizer.addCommunity(conf.snmpComunity);
     }
 
+    /**
+     * Add data to MIB table 
+     * @param {Object} data - Object with data to be added to the MIB
+     */
     setData(data) {
         if (!activeMIB[data.name]) {
-            activeMIB[data.name] = { id: tableCount };
+            activeMIB[data.name] = { id: tableCount, entryList: {} };
             tableCount ++;
             // create new table 
             this.createTable(data);
         }
+        // renew entry in activeMib table
+        activeMIB[data.name].entryList[data.entryID] = new Date();
         // add data to table 
         let columns = [data.entryID];
         for (let i = 0; i < data.columns.length; i++) {
@@ -65,7 +77,10 @@ class snmpServer {
         };
     };
 
-    // create mib 
+    /**
+     * Create a new table if it does not yet exsists 
+     * @param {Object} data - Object with detail on the table that needs to be created 
+     */
     createTable(data) {
         var myTableProvider = {
             name: data.name,
@@ -96,6 +111,30 @@ class snmpServer {
             });
         }
         this.mib.registerProvider(myTableProvider);
+    }
+
+    /**
+     * Cleanup activeMib table from old data every 30 min
+     */
+    housekeeper() {
+        let currentTime = new Date().getTime();
+        let currentTTL = currentTime - this.ttl;
+        Object.keys(activeMIB).forEach(key => {
+            let table = activeMIB[key].entryList;
+            Object.keys(table).forEach(entry => {
+                let entryTime = new Date(table[entry]).getTime();
+                if (entryTime < currentTTL) {
+                    // remove entry from mib
+                    try {
+                        this.mib.deleteTableRow(key, [entry]);
+                        // delete entry from activeMib table 
+                        delete activeMIB[key].entryList[entry];
+                    } catch (err) {
+                        console.log(err.message);
+                    }
+                }
+            })
+        })
     }
 }
 
