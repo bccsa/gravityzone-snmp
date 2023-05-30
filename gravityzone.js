@@ -68,8 +68,39 @@ class gravityzone extends EventEmitter {
         })
     }
 
+    /**
+     * get list of endpoints from gz
+     * @param {Integer} page - page number 
+     * @param {Array} list - list of discovred endpoints
+     */
+    getEndpointList(page, list) {
+        return new Promise((resolve, rejects) => {
+            this.gzCall("network", "getEndpointsList", {perPage: 30, page: page})
+            .then(result => {
+                if (result) {
+                    if (!list) {
+                        list = result;
+                    }
+                    else {
+                        list.items = list.items.concat(result.items)
+                    }
+                    resolve(this.getEndpointList(page + 1, list))
+                }
+                else 
+                    resolve(list)
+            })
+            .catch(err => {
+                console.log(err.message)
+                resolve()
+            })
+        })
+    }
+
+    /**
+     * Genetate list of endpoints to be used by SNMP
+     */
     generateEndpoint() {
-        this.gzCall("network", "getEndpointsList")
+        this.getEndpointList(1)
         .then(result => {
             let endpointList = {};
             Object.keys(result.items).forEach(e => { endpointList[result.items[e].id] = result.items[e] })
